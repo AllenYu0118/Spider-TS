@@ -2,47 +2,19 @@ import fs from 'fs'
 import path from 'path'
 
 import superagent from 'superagent'
-import cheerio from 'cheerio'
 
-interface Course {
-    title: string,
-    count: number,
-    url: string
-}
+import DellAnalyzer from './dellAnalyzer'
+// import AllenAnalyzer from './allenAnalyzer'
 
-interface CourseResult {
-    time: number
-    data: Course[]
-}
-
-interface Content {
-    [propName: number]: Course[]
+export interface Analyzer {
+    analyze: (html: string, filePath: string) => string
 }
 
 class Crowller {
-    private secret = 'soga9527'
-    private url = `http://www.dell-lee.com/?secret=${this.secret}`
+    private filePath = path.resolve(__dirname, '../data/course.json')
 
-    constructor() {
+    constructor(private url: string, private analyzer: Analyzer) {
         this.initSpiderProcess()
-    }
-
-    getCourseInfo(html: string) {
-        const $ = cheerio.load(html)
-        const courseItems = $('.course-link')
-        const courseInfos: Course[] = []
-        courseItems.map((index, element) => {
-            const url = $(element).attr('href') || 'can\'t find href'
-            const title = $(element).find('.course-desc').text()
-            const count = Math.floor(Math.random() * 100 + 1)
-
-            courseInfos.push({ title, count, url })
-        })
-
-        return {
-            time: new Date().getTime(),
-            data: courseInfos
-        }
     }
 
     async getRawHtml() {
@@ -50,26 +22,19 @@ class Crowller {
         return result.text
     }
 
-    generateJsonContent(courseInfo: CourseResult) {
-        const filePath = path.resolve(__dirname, '../data/course.json')
-        let fileContent: Content = {}
-        if (fs.existsSync(filePath)) {
-            fileContent = JSON.parse(fs.readFileSync(filePath, 'utf8'))
-        }
-
-        fileContent[courseInfo.time] = courseInfo.data
-
-        return fileContent
+    writeFile(content: string) {
+        fs.writeFileSync(this.filePath, content)
     }
 
     async initSpiderProcess() {
-        const filePath = path.resolve(__dirname, '../data/course.json')
         const html = await this.getRawHtml()
-        const courseInfo = this.getCourseInfo(html)
-        const fileContent = this.generateJsonContent(courseInfo)
-        fs.writeFileSync(filePath, JSON.stringify(fileContent))
+        const fileContent = this.analyzer.analyze(html, this.filePath)
+        this.writeFile(fileContent)
     }
 }
+const secret = 'soga9527'
+const url = `http://www.dell-lee.com/?secret=${secret}`
+const analyzer = new DellAnalyzer()
+// const analyzer = new AllenAnalyzer()
 
-
-const crowller = new Crowller()
+const crowller = new Crowller(url, analyzer)

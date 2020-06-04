@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node ./src/crowller.ts"
+    "dev": "ts-node ./backend/src/crowller.ts"
   },
   "keywords": [],
   "author": "",
