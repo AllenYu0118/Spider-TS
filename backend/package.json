@@ -1,0 +1,22 @@
+{
+  "name": "introduction",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node ./src/crowller.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/cheerio": "^0.22.18",
+    "@types/superagent": "^4.1.7",
+    "superagent": "^5.2.2"
+  },
+  "devDependencies": {
+    "cheerio": "^1.0.0-rc.3",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.3"
+  }
+}
