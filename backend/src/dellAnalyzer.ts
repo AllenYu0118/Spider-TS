@@ -19,6 +19,16 @@ interface Content {
 
 
 export default class DellAnalyzer implements Analyzer {
+    private static instance: DellAnalyzer
+
+    static getInsatance() {
+        if (!DellAnalyzer.instance) {
+            DellAnalyzer.instance = new DellAnalyzer()
+        }
+
+        return DellAnalyzer.instance
+    }
+
     private getCourseInfo(html: string) {
         const $ = cheerio.load(html)
         const courseItems = $('.course-link')
@@ -37,7 +47,7 @@ export default class DellAnalyzer implements Analyzer {
         }
     }
 
-    generateJsonContent(courseInfo: CourseResult, filePath: string) {
+    private generateJsonContent(courseInfo: CourseResult, filePath: string) {
         let fileContent: Content = {}
         if (fs.existsSync(filePath)) {
             fileContent = JSON.parse(fs.readFileSync(filePath, 'utf8'))
