@@ -3,14 +3,11 @@ import path from 'path'
 
 import superagent from 'superagent'
 
-import DellAnalyzer from './dellAnalyzer'
-// import AllenAnalyzer from './allenAnalyzer'
-
 export interface Analyzer {
     analyze: (html: string, filePath: string) => string
 }
 
-class Crowller {
+export default class Crowller {
     private filePath = path.resolve(__dirname, '../data/course.json')
 
     constructor(private url: string, private analyzer: Analyzer) {
@@ -32,9 +29,3 @@ class Crowller {
         this.writeFile(fileContent)
     }
 }
-const secret = 'soga9527'
-const url = `http://www.dell-lee.com/?secret=${secret}`
-const analyzer = DellAnalyzer.getInsatance()
-// const analyzer = new AllenAnalyzer()
-
-const crowller = new Crowller(url, analyzer)
