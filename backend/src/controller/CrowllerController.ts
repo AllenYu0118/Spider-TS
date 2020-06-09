@@ -23,6 +23,7 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void =
 
 const testMiddleware = (req: BodyRequest, res: Response, next: NextFunction): void => {
     console.log('testMiddleware')
+    next()
 }
 
 @controller('/')
