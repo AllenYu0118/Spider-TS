@@ -1,17 +1,38 @@
 import 'reflect-metadata';
 import { Request, Response } from 'express';
-import { controller, get } from './decorator';
+import { controller, get, post } from '../decorator'
 import { getResponseData } from '../utils/util'
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined };
 }
 
-@controller
-class LoginController {
+@controller('/')
+export class LoginController {
+    static isLogin(req: BodyRequest): boolean {
+        return !!(req.session ? req.session.login : false)
+    }
+
+    @post('/login')
+    login(req: BodyRequest, res: Response): void {
+        const { password } = req.body
+        const isLogin = LoginController.isLogin(req)
+
+        if (isLogin) {
+            res.json(getResponseData(null, '已经登录过'))
+        } else {
+            if (password === '123' && req.session) {
+                req.session.login = true
+                res.json(getResponseData(true))
+            } else {
+                res.json(getResponseData(null, '登录失败'))
+            }
+        }
+    }
+
     @get('/logout')
-    logout(req: BodyRequest, res: Response) {
-        const isLogin = req.session ? req.session.login : false
+    logout(req: BodyRequest, res: Response): void {
+        const isLogin = LoginController.isLogin(req)
 
         if (isLogin && req.session) {
             req.session.login = undefined
@@ -21,8 +42,8 @@ class LoginController {
     }
 
     @get('/')
-    home(req: BodyRequest, res: Response) {
-        const isLogin = req.session ? req.session.login : false;
+    home(req: BodyRequest, res: Response): void {
+        const isLogin = LoginController.isLogin(req)
         if (isLogin) {
             res.send(`
       <html>
