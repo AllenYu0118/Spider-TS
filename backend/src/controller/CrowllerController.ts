@@ -21,10 +21,15 @@ const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void =
     }
 }
 
+const testMiddleware = (req: BodyRequest, res: Response, next: NextFunction): void => {
+    console.log('testMiddleware')
+}
+
 @controller('/')
 export class CrowllerController {
     @get('/getData')
     @use(checkLogin)
+    @use(testMiddleware)
     getData(req: BodyRequest, res: Response): void {
         const secret = 'soga9527'
         const url = `http://www.dell-lee.com/?secret=${secret}`

@@ -9,11 +9,11 @@ export function controller(root: string) {
             const method: Methods = Reflect.getMetadata('method', target.prototype, key)
             const handler = target.prototype[key]
 
-            const middleware: RequestHandler = Reflect.getMetadata('middleware', target.prototype, key)
+            const middlewares: RequestHandler[] = Reflect.getMetadata('middlewares', target.prototype, key)
             if (path && method && handler) {
                 const fullPath = root === '/' ? path : `${root}${path}`
-                if (middleware) {
-                    router[method](fullPath, middleware, handler)
+                if (middlewares && middlewares.length) {
+                    router[method](fullPath, ...middlewares, handler)
                 } else {
                     router[method](fullPath, handler)
                 }
