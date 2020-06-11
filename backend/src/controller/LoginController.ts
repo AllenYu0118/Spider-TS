@@ -13,6 +13,12 @@ export class LoginController {
         return !!(req.session ? req.session.login : false)
     }
 
+    @get('/api/isLogin')
+    isLogin(req: BodyRequest, res: Response): void {
+        const isLogin = LoginController.isLogin(req)
+        res.json(getResponseData(isLogin))
+    }
+
     @post('/login')
     login(req: BodyRequest, res: Response): void {
         const { password } = req.body
