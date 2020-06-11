@@ -7,13 +7,13 @@ interface BodyRequest extends Request {
     body: { [key: string]: string | undefined };
 }
 
-@controller('/')
+@controller('/api')
 export class LoginController {
     static isLogin(req: BodyRequest): boolean {
         return !!(req.session ? req.session.login : false)
     }
 
-    @get('/api/isLogin')
+    @get('/isLogin')
     isLogin(req: BodyRequest, res: Response): void {
         const isLogin = LoginController.isLogin(req)
         res.json(getResponseData(isLogin))
@@ -25,7 +25,7 @@ export class LoginController {
         const isLogin = LoginController.isLogin(req)
 
         if (isLogin) {
-            res.json(getResponseData(null, '已经登录过'))
+            res.json(getResponseData(true))
         } else {
             if (password === '123' && req.session) {
                 req.session.login = true
@@ -45,32 +45,5 @@ export class LoginController {
         }
 
         res.json(getResponseData(true))
-    }
-
-    @get('/')
-    home(req: BodyRequest, res: Response): void {
-        const isLogin = LoginController.isLogin(req)
-        if (isLogin) {
-            res.send(`
-      <html>
-        <body>
-          <a href='/getData'>爬取内容</a>
-          <a href='/showData'>展示内容</a>
-          <a href='/logout'>退出</a>
-        </body>
-      </html>
-    `);
-        } else {
-            res.send(`
-      <html>
-        <body>
-          <form method="post" action="/login">
-            <input type="password" name="password" />
-            <button>登陆</button>
-          </form>
-        </body>
-      </html>
-    `);
-        }
     }
 }
