@@ -11,6 +11,14 @@ import DellAnalyzer from '../utils/analyzer'
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
 }
+interface CourseItem {
+    title: string,
+    count: number
+}
+
+interface DataStructure {
+    [key: string]: CourseItem[]
+}
 
 const checkLogin = (req: BodyRequest, res: Response, next: NextFunction): void => {
     const isLogin = !!(req.session ? req.session.login : false)
@@ -31,7 +39,7 @@ export class CrowllerController {
         const analyzer = DellAnalyzer.getInsatance()
 
         new Crowller(url, analyzer)
-        res.json(getResponseData(true))
+        res.json(getResponseData<boolean>(true))
     }
 
     @get('/showData')
@@ -39,10 +47,10 @@ export class CrowllerController {
     showData(req: BodyRequest, res: Response): void {
         try {
             const fileContent = fs.readFileSync(path.resolve(__dirname, '../../data/course.json'), 'utf-8')
-            res.json(getResponseData(JSON.parse(fileContent)))
+            res.json(getResponseData<DataStructure>(JSON.parse(fileContent)))
 
         } catch (e) {
-            res.json(getResponseData(null, '展示文件不存在!'))
+            res.json(getResponseData<boolean>(false, '展示文件不存在!'))
         }
     }
 }
