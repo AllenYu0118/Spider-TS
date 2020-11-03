@@ -2,6 +2,7 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieSession from 'cookie-session'
 import './controller/'
+import './db/'
 import router from './router'
 
 const app = express()

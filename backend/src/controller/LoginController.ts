@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { Request, Response } from 'express';
 import { controller, get, post } from '../decorator'
 import { getResponseData } from '../utils/util'
+import mysql from '../db/'
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined };
@@ -36,6 +37,29 @@ export class LoginController {
             } else {
                 res.json(getResponseData<responseResult.login>(false, '登录失败'))
             }
+        }
+    }
+
+    @post('/register')
+    register(req: BodyRequest, res: Response): void {
+        const { username, password, email } = req.body
+        const isLogin = LoginController.isLogin(req)
+
+        if (isLogin) {
+            const result = getResponseData<responseResult.login>(true)
+            res.json(result)
+        } else {
+            mysql.query('insert into users(username, password, email) values (?,?,?);', [username, password, email], (err, results) => {
+                if (err) throw err
+                res.json('注册成功!')
+            })
+            // if (password === '123' && req.session) {
+            //     req.session.login = true
+            //     const result = getResponseData<responseResult.login>(true)
+            //     res.json(result)
+            // } else {
+            //     res.json(getResponseData<responseResult.login>(false, '登录失败'))
+            // }
         }
     }
 
