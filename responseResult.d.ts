@@ -13,9 +13,11 @@ declare namespace responseResult {
 
     type isLogin = boolean
 
-    type login = boolean
+    type login = string | boolean
 
     type loginout = boolean
+
+    type register = boolean
 
     type getData = boolean
 

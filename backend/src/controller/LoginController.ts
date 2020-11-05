@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import { Request, Response } from 'express';
+import jwt from 'jsonwebtoken'
 import { controller, get, post } from '../decorator'
 import { getResponseData } from '../utils/util'
 import mysql from '../db/'
@@ -23,20 +24,34 @@ export class LoginController {
 
     @post('/login')
     login(req: BodyRequest, res: Response): void {
-        const { password } = req.body
+        const { username, password } = req.body
         const isLogin = LoginController.isLogin(req)
 
         if (isLogin) {
             const result = getResponseData<responseResult.login>(true)
             res.json(result)
         } else {
-            if (password === '123' && req.session) {
-                req.session.login = true
-                const result = getResponseData<responseResult.login>(true)
-                res.json(result)
-            } else {
-                res.json(getResponseData<responseResult.login>(false, '登录失败'))
-            }
+            mysql.query('select * from users where username=?', [username], (err, results) => {
+                if (err) throw err
+
+                if (results.length > 0) {
+                    if (results[0].password === password && results[0].username === username && req.session) {
+                        req.session.login = true
+                        
+
+                        const token = 'Bearer ' + jwt.sign({ username: username }, 'Allen Yu', { expiresIn: '1h' })
+                        console.log('token: ', token);
+
+                        const result = getResponseData<responseResult.login>(token)
+                        
+                        res.json(result)
+                    } else {
+                        res.json(getResponseData<responseResult.login>(false, '登录失败'))
+                    }
+                } else {
+                    res.json(getResponseData<responseResult.login>(false, '登录失败, 不存在此用户'))
+                }
+            })
         }
     }
 
@@ -49,17 +64,22 @@ export class LoginController {
             const result = getResponseData<responseResult.login>(true)
             res.json(result)
         } else {
-            mysql.query('insert into users(username, password, email) values (?,?,?);', [username, password, email], (err, results) => {
+            mysql.query('select * from users where username=?', [username], (err, results) => {
                 if (err) throw err
-                res.json('注册成功!')
+
+                if (!results.length) {
+                    mysql.query(
+                        'insert into users(username, password, email) values (?,?,?);',
+                        [username, password, email],
+                        (err, results) => {
+                            if (err) throw err
+                            console.log(results)
+                            res.json(getResponseData<responseResult.register>(true))
+                        })
+                } else {
+                    res.json(getResponseData<responseResult.register>(false, '注册失败, 用户名已存在!'))
+                }
             })
-            // if (password === '123' && req.session) {
-            //     req.session.login = true
-            //     const result = getResponseData<responseResult.login>(true)
-            //     res.json(result)
-            // } else {
-            //     res.json(getResponseData<responseResult.login>(false, '登录失败'))
-            // }
         }
     }
 
