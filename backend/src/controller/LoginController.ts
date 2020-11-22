@@ -37,13 +37,8 @@ export class LoginController {
                 if (results.length > 0) {
                     if (results[0].password === password && results[0].username === username && req.session) {
                         req.session.login = true
-                        
-
                         const token = 'Bearer ' + jwt.sign({ username: username }, 'Allen Yu', { expiresIn: '1h' })
-                        console.log('token: ', token);
-
                         const result = getResponseData<responseResult.login>(token)
-                        
                         res.json(result)
                     } else {
                         res.json(getResponseData<responseResult.login>(false, '登录失败'))
@@ -90,7 +85,6 @@ export class LoginController {
         if (isLogin && req.session) {
             req.session.login = undefined
         }
-
         res.json(getResponseData<responseResult.loginout>(true))
     }
 }

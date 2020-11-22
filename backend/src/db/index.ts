@@ -23,7 +23,7 @@ connection.query('SELECT 1', function (error, results, fields) {
 
 export default connection
 
-// connection.query('CREATE TABLE users (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255), password VARCHAR(255), email VARCHAR(255))', (err, result) => {
+// connection.query('CREATE TABLE github (id INT AUTO_INCREMENT PRIMARY KEY, name VARCHAR(255), star VARCHAR(255), url VARCHAR(255))', (err, result) => {
 //     if (err) throw err;
 //     console.log('Table Create Success!')
 // })

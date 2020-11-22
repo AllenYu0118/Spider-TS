@@ -7,6 +7,7 @@ import { controller, use, get } from '../decorator'
 import { getResponseData } from '../utils/util'
 import Crowller from '../utils/crowller'
 import DellAnalyzer from '../utils/analyzer'
+import GithubAnalyzer from "../utils/githubAnalyzer"
 
 interface BodyRequest extends Request {
     body: { [key: string]: string | undefined }
@@ -29,6 +30,16 @@ export class CrowllerController {
         const secret = 'soga9527'
         const url = `http://www.dell-lee.com/?secret=${secret}`
         const analyzer = DellAnalyzer.getInsatance()
+
+        new Crowller(url, analyzer)
+        res.json(getResponseData<responseResult.getData>(true))
+    }
+
+    @get('/getGithubData')
+    @use(checkLogin)
+    getGithubData(req: BodyRequest, res: Response): void {
+        const url = `https://github.com/vuejs/vue-next`
+        const analyzer = GithubAnalyzer.getInsatance()
 
         new Crowller(url, analyzer)
         res.json(getResponseData<responseResult.getData>(true))

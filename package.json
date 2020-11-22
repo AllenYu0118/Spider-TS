@@ -26,6 +26,7 @@
     "@types/superagent": "^4.1.7",
     "body-parse": "^0.1.0",
     "cookie-session": "^1.4.0",
+    "dayjs": "^1.9.6",
     "express": "^4.17.1",
     "express-jwt": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
