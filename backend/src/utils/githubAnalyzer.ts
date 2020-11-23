@@ -45,7 +45,7 @@ export default class GithubAnalyzer implements Analyzer {
         let { author, name, star } = data
         mysql.query(
             'insert into github(author, name, star, datetime) values (?,?,?,?);',
-            [author, name, star, dayjs().format('YYYY-MM-DD HH-mm-ss')],
+            [author, name, star, dayjs().format('YYYY-MM-DD HH:mm:ss')],
             (err) => {
                 if (err) throw err
             })
